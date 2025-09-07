@@ -14,11 +14,12 @@ from .restapis import get_request, analyze_review_sentiments, post_review
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+
 # Create your views here.
 def get_cars(request):
     count = CarMake.objects.filter().count()
     print(count)
-    if(count == 0):
+    if (count == 0):
         initiate()
     car_models = CarModel.objects.select_related('car_make')
     cars = []
@@ -26,7 +27,7 @@ def get_cars(request):
         cars.append(
             {"CarModel": car_model.name, "CarMake": car_model.car_make.name}
         )
-    return JsonResponse({"CarModels":cars})
+    return JsonResponse({"CarModels": cars})
 
 
 # Create a `login_request` view to handle sign in request
@@ -81,7 +82,7 @@ def registration(request):
         login(request, user)
         data = {"userName": username, "status": "Authenticated"}
     else:
-        data = {"userName":username,"error":"Already Registered"}
+        data = {"userName": username, "error": "Already Registered"}
     return JsonResponse(data)
 
 
@@ -90,12 +91,12 @@ def registration(request):
 # Update the `get_dealerships` render list of dealerships all by default,
 # particular state if state is passed
 def get_dealerships(request, state="All"):
-    if(state == "All"):
+    if (state == "All"):
         endpoint = "/fetchDealers"
     else:
         endpoint = "/fetchDealers/"+state
     dealerships = get_request(endpoint)
-    return JsonResponse({"status":200,"dealers":dealerships})
+    return JsonResponse({"status": 200, "dealers": dealerships})
 
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
@@ -123,14 +124,14 @@ def get_dealer_details(request, dealer_id):
 
 # Create a `add_review` view to submit a review
 def add_review(request):
-    if ( not request.user.is_anonymous):
+    if (not request.user.is_anonymous):
         data = json.loads(request.body)
         try:
             post_review(data)
-            return JsonResponse({"status":200})
+            return JsonResponse({"status": 200})
         except Exception:
             return JsonResponse(
-                {"status":401,"message":"Error in posting review"}
+                {"status": 401, "message":"Error in posting review"}
             )
     else:
-        return JsonResponse({"status":403,"message":"Unauthorized"})
+        return JsonResponse({"status": 403, "message": "Unauthorized"})
