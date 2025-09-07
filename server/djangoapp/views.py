@@ -23,8 +23,11 @@ def get_cars(request):
     car_models = CarModel.objects.select_related('car_make')
     cars = []
     for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+        cars.append(
+            {"CarModel": car_model.name, "CarMake": car_model.car_make.name}
+        )
     return JsonResponse({"CarModels":cars})
+
 
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
@@ -42,11 +45,13 @@ def login_user(request):
         data = {"userName": username, "status": "Authenticated"}
     return JsonResponse(data)
 
+
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
     data = { "userName": "", "status": "Unauthenticated" }
     logout(request)
     return JsonResponse(data)
+
 
 # Create a `registration` view to handle sign up request
 @csrf_exempt
@@ -63,14 +68,15 @@ def registration(request):
         # Check if user already exists
         User.objects.get(username=username)
         user_exist = True
-    except:
+    except Exception:
         # If not, simply log this is a new user
         logger.debug("{} is new user".format(username))
     # If it is a new user
     if not user_exist:
         # Create user in auth_user table
-        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name,
-                                        password=password, email=email)
+        user = User.objects.create_user(
+            username=username, first_name=first_name, last_name=last_name,
+            password=password, email=email)
         # Login the user and redirect to course list page
         login(request, user)
         data = {"userName": username, "status": "Authenticated"}
@@ -78,9 +84,11 @@ def registration(request):
         data = {"userName":username,"error":"Already Registered"}
     return JsonResponse(data)
 
-# # Update the `get_dealerships` view to render the index page with
-# a list of dealerships
-#Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
+
+# Update the `get_dealerships` view to render the index page 
+# with a list of dealerships
+# Update the `get_dealerships` render list of dealerships all by default,
+# particular state if state is passed
 def get_dealerships(request, state="All"):
     if(state == "All"):
         endpoint = "/fetchDealers"
@@ -112,6 +120,7 @@ def get_dealer_details(request, dealer_id):
     else:
         return JsonResponse({"status": 400, "message": "Bad Request"})
 
+
 # Create a `add_review` view to submit a review
 def add_review(request):
     if ( not request.user.is_anonymous):
@@ -119,7 +128,9 @@ def add_review(request):
         try:
             post_review(data)
             return JsonResponse({"status":200})
-        except:
-            return JsonResponse({"status":401,"message":"Error in posting review"})
+        except Exception:
+            return JsonResponse(
+                {"status":401,"message":"Error in posting review"}
+            )
     else:
         return JsonResponse({"status":403,"message":"Unauthorized"})
