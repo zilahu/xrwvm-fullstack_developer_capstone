@@ -8,6 +8,7 @@ from django.db import models
 # - Description
 # - Any other fields you would like to include in car make model
 # - __str__ method to print a car make object
+
 class CarMake(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -24,6 +25,7 @@ class CarMake(models.Model):
 # - Year (IntegerField) with min value 2015 and max value 2023
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
+
 class CarModel(models.Model):
     CAR_TYPE_CHOICES = [
         ('sedan', 'Sedan'),
@@ -49,7 +51,7 @@ class CarModel(models.Model):
     ]
     name = models.CharField(max_length=100)
     car_make = models.ForeignKey(
-        'CarMake', 
+        'CarMake',
         on_delete=models.CASCADE,
         related_name='car_models'
     )
